@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru" ng-app="cookbook">
+<head>
+<meta charset="utf-8">
+<title>Кулинарная книга</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js"></script>
+<script src="js/libs/ui-bootstrap-tpls-0.10.0.min.js"></script>
+<script src="js/project.js"></script>
+</head>
+<body>
+<div class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header"><a href="" class="navbar-brand">Кулинарная книга</a></div>
+  </div>
+</div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"> <img src="images/logo.jpg"/></div>
+        <div class="col-md-10">
+          <blockquote class="text-center">
+            <p>Пред ним roast-beef окровавленный, </p>
+            <p>И трюфли, роскошь юных лет,</p>
+            <p>Французской кухни лучший цвет,</p>
+            <p>И Стразбурга пирог нетленный</p>
+            <p>Меж сыром лимбургским живым</p>
+            <p>И ананасом золотым.</p>
+            <small>А. С. Пушкин "Евгений Онегин"</small>
+          </blockquote>
+          <hr/>
+          <div class="row">
+            <div class="col-md-4">
+                 <script type="text/ng-template" id="ModalView.html">
+                  <div class="modal-header">
+                   <button type="button" ng-click="cancel()" class="close">×</button>
+                   <h4 class="modal-title">{{recipe.title}}</h4>
+                  </div>
+                  <div class="modal-body" >
+                   <div ng-bind=recipe.description></div>
+                  </div>
+                  <div class="modal-footer">
+                  <button class="btn btn-primary" ng-click="cancel()">OK</button>
+                  </div>
+                 </script>
+                 <script type="text/ng-template" id="ModalEdit.html">
+                  <div class="modal-header">
+                   <button type="button" ng-click="cancel()" class="close">×</button>
+                   <h4 class="modal-title" ng-hide="recipe._id">Новый рецепт</h4>
+                   <h4 class="modal-title" ng-show="recipe._id">Редактирование рецепта</h4>
+                  </div>
+                 <form name="newRecipe">
+                  <div class="modal-body">
+                  
+                  <div class="form-group">
+                   <div class="control-group" ng-class="{error: newRecipe.title.$invalid}">
+                    <p>
+                    <input name="title" type="text" placeholder="Название блюда" ng-model="recipe.title" class="form-control" required/>
+                    </p>
+                   </div>
+                   <div ng-show="recipe._id">
+                   
+                   <tabset>
+                    
+                    <tab heading="Текущая" select="current()"></tab>
+                    <tab ng-repeat="tab in recipe.history" heading="{{tab.date|date:'dd.MM.yy H:mm:ss'}}" select="show($index)"></tab>
+                   </tabset>
+                   </div>
+                   <p><textarea id="description" ng-change="update()" ng-model="recipe.description" placeholder="Описание" rows="10" class="form-control"></textarea></p>
+                   
+                   </div>
+                   
+                  </div>
+                  <div class="modal-footer">
+                  <button class="btn btn-primary" ng-click="ok()" ng-disabled="isClean() || newRecipe.$invalid">OK</button>
+                  <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
+                  <button ng-click="destroy()" ng-show="recipe._id" class="btn btn-danger">Удалить</button>
+                  </div>
+                 </form> 
+                 </script>
+              <p>  
+              <a href="#/add" class="btn btn-success" ><span class="glyphicon glyphicon-plus"></span><span> Добавить рецепт</span></a>
+               </p>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Рецепты</h3>
+        </div>
+        <div id="recipe-list" class="panel-body" ng-view></div>
+          <!-- CACHE FILE: list.html -->
+          <script type="text/ng-template" id="list.html">
+          <p><input type="text" ng-model="search" size="30" class="form-control search-query" placeholder="Поиск рецепта..."></p>
+    
+          <div class="item" ng-repeat="recipe in recipes | filter:search | orderBy:'-created'">
+          <h4>{{recipe.title}} <small>{{recipe.created|date:'dd.MM.yy H:mm:ss'}}</small></h4>
+          <p>{{recipe.description|truncate:250}}</p>
+          <div class="btn-group"><a data-toggle="tooltip" title="Редактировать" href="#/edit/{{recipe._id.$oid}}" class="btn btn-default">
+          <span class="glyphicon glyphicon-edit"></span></a><a href="#/recipes/{{recipe._id.$oid}}" class="btn btn-default">Читать</a></div>
+          <hr/>
+          </div>
+          </script>
+      </div>
+     
+    </div>
+</div>
+
+</body>
+</html>
